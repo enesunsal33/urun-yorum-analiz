@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ürün Yorum Analizi</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+
+
+<body>
+    <nav class="navbar">
+    <div class="nav-left">
+        <a href="/">🛒 Ürün Yorum Analizi</a>
+        <a href="/about">Hakkında</a>
+    </div>
+
+    <div class="nav-right">
+        {% if current_user %}
+            <span class="user-badge">👤 {{ current_user.username }}</span>
+            <a href="/logout" class="nav-btn">Çıkış Yap</a>
+        {% else %}
+            <a href="/login" class="nav-btn">Giriş Yap</a>
+            <a href="/register" class="nav-btn register-btn">Kayıt Ol</a>
+        {% endif %}
+    </div>
+</nav>
+
+<header>
+    <h1>Ürün Yorum Analiz Sistemi</h1>
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+<footer class="footer">
+    <p>© 2026 Ürün Yorum Analiz Sistemi | KTÜN Dönem Projesi</p>
+</footer>
+</body>
+</html>

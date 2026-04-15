@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<a href="/" class="back-btn">← Ana Sayfaya Dön</a>
+
+<div class="product-detail-container">
+    <div class="product-detail-top">
+        {% if not analysis %}
+        <div class="product-image-box">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-detail-image">
+        </div>
+        {% endif %}
+
+        <div class="product-info-box">
+            <h2>{{ product.name }}</h2>
+            <p class="price">{{ product.price }} TL</p>
+
+            <form action="/product/{{ product.id }}/analyze" method="post" id="analyzeForm">
+                <button type="submit" class="analyze-btn" id="analyzeBtn">
+                    Yorumları AI ile Analiz Et
+                </button>
+            </form>
+
+            <div id="loadingBox" style="display: none; margin-top: 15px;">
+                <p style="font-weight: bold; color: #444;">Analiz yapılıyor, lütfen bekleyin...</p>
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="error-box">
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    <div class="comment-form-card">
+        <h3>Yorum Yap</h3>
+
+        {% if current_user %}
+        <form method="post" action="/product/{{ product.id }}/comment" class="comment-form">
+            <textarea
+                name="content"
+                rows="4"
+                placeholder="Ürün hakkındaki yorumunu yaz..."
+                required
+            ></textarea>
+            <button type="submit">Yorumu Gönder</button>
+        </form>
+        {% else %}
+        <div class="login-warning">
+            Yorum yapabilmek için <a href="/login">giriş yap</a> veya
+            <a href="/register">kayıt ol</a>.
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="comments-section">
+    <h3>Yorumlar</h3>
+
+    {% if comments %}
+        {% for comment in comments %}
+        <div class="comment-card">
+            <div class="comment-header">
+                <div class="comment-user-row">
+                    <strong>{{ comment.username }}</strong>
+
+                    {% if current_user and comment.user_id == current_user.id %}
+                        <span class="my-comment-badge">Benim yorumum</span>
+                    {% endif %}
+                </div>
+
+                <span class="comment-date">
+                    {% if comment.created_at %}
+                        {{ comment.created_at.strftime("%d.%m.%Y %H:%M") }}
+                    {% endif %}
+                </span>
+            </div>
+
+            <p class="comment-text">{{ comment.content }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="comment-card">
+            <p>Bu ürün için henüz yorum yok.</p>
+        </div>
+    {% endif %}
+</div>
+
+    {% if analysis %}
+    <div class="analysis-card">
+        <h2 class="analysis-title">🧠 AI Analiz Sonucu</h2>
+
+        <div class="analysis-section">
+            <h3>📌 Genel Görüş</h3>
+            <p>{{ analysis.genel_gorus }}</p>
+        </div>
+
+        <div class="analysis-section">
+            <h3>✔ Avantajlar</h3>
+            <ul>
+                {% for item in analysis.avantajlar %}
+                <li>✔ {{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="analysis-section">
+            <h3>❌ Dezavantajlar</h3>
+            <ul>
+                {% for item in analysis.dezavantajlar %}
+                <li>❌ {{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="analysis-section">
+            <h3>👤 Kime Uygun?</h3>
+            <p>{{ analysis.kime_uygun }}</p>
+        </div>
+
+        <div class="analysis-section warning">
+            <h3>⚠ Dikkat Edilmesi Gerekenler</h3>
+            <p>{{ analysis.dikkat_edilmesi_gerekenler }}</p>
+        </div>
+
+        <div class="analysis-section summary">
+            <h3>📝 Özet</h3>
+            <p>{{ analysis.ozet }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    const form = document.getElementById("analyzeForm");
+    const loadingBox = document.getElementById("loadingBox");
+    const button = document.getElementById("analyzeBtn");
+
+    if (form) {
+        form.addEventListener("submit", function () {
+            loadingBox.style.display = "block";
+            button.disabled = true;
+            button.innerText = "Analiz ediliyor...";
+        });
+    }
+</script>
+
+{% endblock %}

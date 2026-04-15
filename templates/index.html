@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method="get">
+    <input class="search-input" type="text" name="search" placeholder="🔎 Ürün adı ile ara..." value="{{ search_query or '' }}">
+
+    <select name="category">
+        <option value="" {% if not selected_category %}selected{% endif %}>Tüm Kategoriler</option>
+        <option value="Kulaklık" {% if selected_category == "Kulaklık" %}selected{% endif %}>Kulaklık</option>
+        <option value="Mouse" {% if selected_category == "Mouse" %}selected{% endif %}>Mouse</option>
+        <option value="Klavye" {% if selected_category == "Klavye" %}selected{% endif %}>Klavye</option>
+        <option value="Telefon" {% if selected_category == "Telefon" %}selected{% endif %}>Telefon</option>
+        <option value="Tablet" {% if selected_category == "Tablet" %}selected{% endif %}>Tablet</option>
+    </select>
+
+    <select name="sort">
+        <option value="" {% if not selected_sort %}selected{% endif %}>Sıralama</option>
+        <option value="asc" {% if selected_sort == "asc" %}selected{% endif %}>Fiyat Artan</option>
+        <option value="desc" {% if selected_sort == "desc" %}selected{% endif %}>Fiyat Azalan</option>
+    </select>
+
+    <button type="submit">Filtrele</button>
+    <a href="/" class="clear-btn">Temizle</a>
+</form>
+
+<h2>Ürünler</h2>
+
+<p class="results-count">{{ total_products }} ürün bulundu</p>
+
+{% if products|length == 0 %}
+    <p>Aramanıza uygun ürün bulunamadı.</p>
+{% endif %}
+
+<div class="product-grid">
+    {% for product in products %}
+        <div class="product-card">
+            <img src="{{ product.image_url }}" width="200">
+            <h3>{{ product.name }}</h3>
+            <p class="rating">⭐ {{ product.rating }}</p>
+            <p class="price">{{ product.price }} TL</p>
+            <p class="category-badge category-{{ product.category }}">{{ product.category }}</p>
+            <a href="/product/{{ product.id }}" class="detail-btn">Detay</a>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="?page={{ page - 1 }}&category={{ selected_category or '' }}&search={{ search_query or '' }}&sort={{ selected_sort or '' }}">Önceki</a>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+        <a href="?page={{ p }}&category={{ selected_category or '' }}&search={{ search_query or '' }}&sort={{ selected_sort or '' }}"
+           class="{% if p == page %}active-page{% endif %}">
+            {{ p }}
+        </a>
+    {% endfor %}
+
+    {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}&category={{ selected_category or '' }}&search={{ search_query or '' }}&sort={{ selected_sort or '' }}">Sonraki</a>
+    {% endif %}
+</div>
+
+{% endblock %}

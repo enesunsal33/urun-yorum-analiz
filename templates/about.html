@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px;">
+    <h2>Proje Hakkında</h2>
+
+    <p>
+        Bu proje, kullanıcıların ürünler hakkında yaptığı yorumları analiz ederek,
+        ürünün genel değerlendirmesini, avantajlarını ve dezavantajlarını otomatik olarak çıkarmayı amaçlamaktadır.
+    </p>
+
+    <p>
+        Backend tarafında FastAPI kullanılmış, frontend tarafında Jinja2 template sistemi tercih edilmiştir.
+        Veri tabanı olarak SQLite kullanılmıştır.
+    </p>
+
+    <p>
+        Yorum analizi için yapay zeka entegrasyonu planlanmıştır.
+    </p>
+</div>
+
+{% endblock %}

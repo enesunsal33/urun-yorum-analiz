@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+jinja2
+sqlalchemy
+python-dotenv
+pydantic
+google-genai
+psycopg2-binary
+passlib
+python-multipart
+itsdangerous
