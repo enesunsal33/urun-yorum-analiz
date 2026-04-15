@@ -73,9 +73,9 @@ def home(request: Request):
     db.close()
 
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
-            "request": request,
             "products": products,
             "selected_category": category,
             "search_query": search,
@@ -105,9 +105,9 @@ def product_detail(request: Request, product_id: int):
     db.close()
 
     return templates.TemplateResponse(
+        request,
         "product_detail.html",
         {
-            "request": request,
             "product": product,
             "comments": comments,
             "current_user": current_user,
@@ -168,9 +168,9 @@ def analyze_product(request: Request, product_id: int):
     if not product:
         db.close()
         return templates.TemplateResponse(
+            request,
             "product_detail.html",
             {
-                "request": request,
                 "product": None,
                 "comments": [],
                 "analysis": None,
@@ -182,9 +182,9 @@ def analyze_product(request: Request, product_id: int):
     if not comments:
         db.close()
         return templates.TemplateResponse(
+            request,
             "product_detail.html",
             {
-                "request": request,
                 "product": product,
                 "comments": [],
                 "analysis": None,
@@ -205,9 +205,9 @@ def analyze_product(request: Request, product_id: int):
         db.close()
 
         return templates.TemplateResponse(
+            request,
             "product_detail.html",
             {
-                "request": request,
                 "product": product,
                 "comments": comments,
                 "analysis": analysis,
@@ -220,9 +220,9 @@ def analyze_product(request: Request, product_id: int):
         db.close()
 
         return templates.TemplateResponse(
+            request,
             "product_detail.html",
             {
-                "request": request,
                 "product": product,
                 "comments": comments,
                 "analysis": None,
@@ -239,9 +239,9 @@ def register_page(request: Request):
     db.close()
 
     return templates.TemplateResponse(
+        request,
         "register.html",
         {
-            "request": request,
             "error": None,
             "current_user": current_user
         }
@@ -260,9 +260,9 @@ def register(request: Request, username: str = Form(...), password: str = Form(.
     if len(username) < 3:
         db.close()
         return templates.TemplateResponse(
+            request,
             "register.html",
             {
-                "request": request,
                 "error": "Kullanıcı adı en az 3 karakter olmalı.",
                 "current_user": current_user
             }
@@ -271,9 +271,9 @@ def register(request: Request, username: str = Form(...), password: str = Form(.
     if len(password) < 4:
         db.close()
         return templates.TemplateResponse(
+            request,
             "register.html",
             {
-                "request": request,
                 "error": "Şifre en az 4 karakter olmalı.",
                 "current_user": current_user
             }
@@ -283,9 +283,9 @@ def register(request: Request, username: str = Form(...), password: str = Form(.
     if existing_user:
         db.close()
         return templates.TemplateResponse(
+            request,
             "register.html",
             {
-                "request": request,
                 "error": "Bu kullanıcı adı zaten alınmış.",
                 "current_user": current_user
             }
@@ -312,9 +312,9 @@ def login_page(request: Request):
     db.close()
 
     return templates.TemplateResponse(
+        request,
         "login.html",
         {
-            "request": request,
             "error": None,
             "current_user": current_user
         }
@@ -330,9 +330,9 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
     if not user or not verify_password(password, user.hashed_password):
         db.close()
         return templates.TemplateResponse(
+            request,
             "login.html",
             {
-                "request": request,
                 "error": "Kullanıcı adı veya şifre hatalı.",
                 "current_user": None
             }
@@ -357,9 +357,9 @@ def about(request: Request):
     db.close()
 
     return templates.TemplateResponse(
+        request,
         "about.html",
         {
-            "request": request,
             "current_user": current_user
         }
     )
