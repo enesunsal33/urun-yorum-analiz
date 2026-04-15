@@ -67,8 +67,16 @@ def home(request: Request):
 
     products = query.offset((page - 1) * per_page).limit(per_page).all()
 
+    favorite_product_ids = set()
+    if current_user:
+        favorite_product_ids = {
+            fav.product_id
+            for fav in db.query(models.Favorite).filter(models.Favorite.user_id == current_user.id).all()
+        }
+
     for product in products:
         product.rating = round(random.uniform(3.0, 5.0), 1)
+        product.is_favorite = product.id in favorite_product_ids
 
     db.close()
 
@@ -102,6 +110,18 @@ def product_detail(request: Request, product_id: int):
         .all()
     )
 
+    is_favorite = False
+    if current_user and product:
+        is_favorite = (
+            db.query(models.Favorite)
+            .filter(
+                models.Favorite.user_id == current_user.id,
+                models.Favorite.product_id == product_id
+            )
+            .first()
+            is not None
+        )
+
     db.close()
 
     return templates.TemplateResponse(
@@ -112,9 +132,48 @@ def product_detail(request: Request, product_id: int):
             "comments": comments,
             "current_user": current_user,
             "analysis": None,
-            "error": None
+            "error": None,
+            "is_favorite": is_favorite
         }
     )
+
+
+@app.post("/product/{product_id}/favorite")
+def toggle_favorite(request: Request, product_id: int):
+    db = SessionLocal()
+    current_user = get_current_user(request, db)
+
+    if not current_user:
+        db.close()
+        return RedirectResponse(url="/login", status_code=303)
+
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if not product:
+        db.close()
+        return RedirectResponse(url="/", status_code=303)
+
+    existing_favorite = (
+        db.query(models.Favorite)
+        .filter(
+            models.Favorite.user_id == current_user.id,
+            models.Favorite.product_id == product_id
+        )
+        .first()
+    )
+
+    if existing_favorite:
+        db.delete(existing_favorite)
+    else:
+        favorite = models.Favorite(
+            user_id=current_user.id,
+            product_id=product_id
+        )
+        db.add(favorite)
+
+    db.commit()
+    db.close()
+
+    return RedirectResponse(url=f"/product/{product_id}", status_code=303)
 
 
 @app.post("/product/{product_id}/comment")
@@ -165,6 +224,18 @@ def analyze_product(request: Request, product_id: int):
         .all()
     )
 
+    is_favorite = False
+    if current_user and product:
+        is_favorite = (
+            db.query(models.Favorite)
+            .filter(
+                models.Favorite.user_id == current_user.id,
+                models.Favorite.product_id == product_id
+            )
+            .first()
+            is not None
+        )
+
     if not product:
         db.close()
         return templates.TemplateResponse(
@@ -175,7 +246,8 @@ def analyze_product(request: Request, product_id: int):
                 "comments": [],
                 "analysis": None,
                 "error": "Ürün bulunamadı.",
-                "current_user": current_user
+                "current_user": current_user,
+                "is_favorite": False
             }
         )
 
@@ -189,7 +261,8 @@ def analyze_product(request: Request, product_id: int):
                 "comments": [],
                 "analysis": None,
                 "error": "Bu ürün için analiz edilecek yorum bulunamadı.",
-                "current_user": current_user
+                "current_user": current_user,
+                "is_favorite": is_favorite
             }
         )
 
@@ -212,7 +285,8 @@ def analyze_product(request: Request, product_id: int):
                 "comments": comments,
                 "analysis": analysis,
                 "error": None,
-                "current_user": current_user
+                "current_user": current_user,
+                "is_favorite": is_favorite
             }
         )
 
@@ -227,7 +301,8 @@ def analyze_product(request: Request, product_id: int):
                 "comments": comments,
                 "analysis": None,
                 "error": f"Analiz sırasında hata oluştu: {str(e)}",
-                "current_user": current_user
+                "current_user": current_user,
+                "is_favorite": is_favorite
             }
         )
 

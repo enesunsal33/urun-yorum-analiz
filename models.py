@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.orm import relationship
 from datetime import datetime, UTC
 from database import Base
@@ -13,6 +13,7 @@ class User(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
     comments = relationship("Comment", back_populates="user")
+    favorites = relationship("Favorite", back_populates="user", cascade="all, delete-orphan")
 
 
 class Product(Base):
@@ -26,6 +27,7 @@ class Product(Base):
     category = Column(String, nullable=False)
 
     comments = relationship("Comment", back_populates="product", cascade="all, delete-orphan")
+    favorites = relationship("Favorite", back_populates="product", cascade="all, delete-orphan")
 
 
 class Comment(Base):
@@ -40,3 +42,18 @@ class Comment(Base):
 
     product = relationship("Product", back_populates="comments")
     user = relationship("User", back_populates="comments")
+
+
+class Favorite(Base):
+    __tablename__ = "favorites"
+    __table_args__ = (
+        UniqueConstraint("user_id", "product_id", name="uq_user_product_favorite"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+    user = relationship("User", back_populates="favorites")
+    product = relationship("Product", back_populates="favorites")

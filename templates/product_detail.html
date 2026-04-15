@@ -16,6 +16,23 @@
             <h2>{{ product.name }}</h2>
             <p class="price">{{ product.price }} TL</p>
 
+            {% if current_user %}
+            <form action="/product/{{ product.id }}/favorite" method="post" class="favorite-form">
+                <button type="submit" class="favorite-btn {% if is_favorite %}favorited{% endif %}">
+                    {% if is_favorite %}
+                        ❤️ Favorilerden Çıkar
+                    {% else %}
+                        🤍 Favorilere Ekle
+                    {% endif %}
+                </button>
+            </form>
+            {% else %}
+            <div class="login-warning">
+                Favorilere eklemek için <a href="/login">giriş yap</a> veya
+                <a href="/register">kayıt ol</a>.
+            </div>
+            {% endif %}
+
             <form action="/product/{{ product.id }}/analyze" method="post" id="analyzeForm">
                 <button type="submit" class="analyze-btn" id="analyzeBtn">
                     Yorumları AI ile Analiz Et
@@ -57,36 +74,36 @@
     </div>
 
     <div class="comments-section">
-    <h3>Yorumlar</h3>
+        <h3>Yorumlar</h3>
 
-    {% if comments %}
-        {% for comment in comments %}
-        <div class="comment-card">
-            <div class="comment-header">
-                <div class="comment-user-row">
-                    <strong>{{ comment.username }}</strong>
+        {% if comments %}
+            {% for comment in comments %}
+            <div class="comment-card">
+                <div class="comment-header">
+                    <div class="comment-user-row">
+                        <strong>{{ comment.username }}</strong>
 
-                    {% if current_user and comment.user_id == current_user.id %}
-                        <span class="my-comment-badge">Benim yorumum</span>
-                    {% endif %}
+                        {% if current_user and comment.user_id == current_user.id %}
+                            <span class="my-comment-badge">Benim yorumum</span>
+                        {% endif %}
+                    </div>
+
+                    <span class="comment-date">
+                        {% if comment.created_at %}
+                            {{ comment.created_at.strftime("%d.%m.%Y %H:%M") }}
+                        {% endif %}
+                    </span>
                 </div>
 
-                <span class="comment-date">
-                    {% if comment.created_at %}
-                        {{ comment.created_at.strftime("%d.%m.%Y %H:%M") }}
-                    {% endif %}
-                </span>
+                <p class="comment-text">{{ comment.content }}</p>
             </div>
-
-            <p class="comment-text">{{ comment.content }}</p>
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="comment-card">
-            <p>Bu ürün için henüz yorum yok.</p>
-        </div>
-    {% endif %}
-</div>
+            {% endfor %}
+        {% else %}
+            <div class="comment-card">
+                <p>Bu ürün için henüz yorum yok.</p>
+            </div>
+        {% endif %}
+    </div>
 
     {% if analysis %}
     <div class="analysis-card">
