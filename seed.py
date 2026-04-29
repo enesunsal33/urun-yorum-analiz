@@ -7,6 +7,7 @@ Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
+# Eski verileri temizle
 db.query(Comment).delete()
 db.query(Product).delete()
 db.commit()
@@ -15,79 +16,142 @@ categories = {
     "Kulaklık": {
         "products": ["Kablosuz Kulaklık", "Gaming Kulaklık", "Bluetooth Kulaklık", "Kulak İçi Kulaklık"],
         "comments": [
-            "Ses kalitesi oldukça başarılı.",
-            "Bass performansı beklediğimden iyi çıktı.",
-            "Mikrofon kalitesi biraz zayıf.",
-            "Uzun kullanımda kulağı rahatsız etmiyor.",
-            "Şarj süresi yeterli.",
-            "Bluetooth bağlantısı bazen geç kuruluyor.",
-            "Fiyatına göre gayet iyi.",
-            "Malzeme kalitesi daha iyi olabilirdi.",
-            "Dış ses yalıtımı başarılı.",
-            "Oyunlarda gecikme yok."
+            "Ses kalitesi günlük kullanım için gayet yeterli.",
+            "Bass performansı özellikle müzik dinlerken tatmin edici.",
+            "Mikrofon kalitesi konuşmalarda iş görüyor ama çok üst seviye değil.",
+            "Uzun kullanımda kulağı çok fazla rahatsız etmiyor.",
+            "Şarj süresi beklentimi karşıladı.",
+            "Bluetooth bağlantısı genel olarak stabil ama bazen geç bağlanıyor.",
+            "Fiyatına göre alınabilecek mantıklı bir ürün.",
+            "Malzeme kalitesi iyi fakat daha sağlam hissedebilirdi.",
+            "Dış ses yalıtımı kalabalık ortamlarda işe yarıyor.",
+            "Oyunlarda gecikme çok fark edilmiyor.",
+            "Kutu içeriği yeterli ve ürün düzgün paketlenmişti.",
+            "Ses seviyesi yüksek ama son seviyede biraz bozulma var.",
+            "Kulak pedleri yumuşak, uzun kullanımda avantaj sağlıyor.",
+            "Telefonla eşleştirme işlemi kolay oldu.",
+            "Mikrofonu dış ortamda biraz zayıf kalabiliyor.",
+            "Tasarımı sade ve şık duruyor.",
+            "Şarj kutusu küçük olduğu için taşımak kolay.",
+            "Film izlerken ses gecikmesi yaşamadım.",
+            "Fiyatı biraz daha düşük olsa çok daha iyi olurdu.",
+            "Genel olarak beklentimi karşıladı."
         ]
     },
     "Mouse": {
         "products": ["Oyuncu Mouse", "Kablosuz Mouse", "RGB Mouse", "Ergonomik Mouse"],
         "comments": [
-            "Tutuşu çok rahat.",
-            "Tıklama hissi güzel.",
-            "Uzun kullanımda yormuyor.",
-            "RGB ışıklar hoş.",
-            "DPI geçişleri iyi.",
-            "Boyutu biraz küçük.",
-            "Kablosuz performansı stabil.",
-            "Malzeme kalitesi iyi.",
-            "Oyun performansı başarılı.",
-            "Scroll biraz sert."
+            "Tutuşu rahat ve ele iyi oturuyor.",
+            "Tıklama hissi tok ve kaliteli.",
+            "Uzun kullanımda bile eli çok yormuyor.",
+            "RGB ışıklar tasarıma güzel bir hava katıyor.",
+            "DPI geçişleri pratik ve hızlı çalışıyor.",
+            "Boyutu küçük elliler için daha uygun olabilir.",
+            "Kablosuz performansı beklediğimden daha stabil.",
+            "Malzeme kalitesi fiyatına göre iyi.",
+            "Oyunlarda tepki süresi başarılı.",
+            "Scroll tekeri biraz sert ama alışılıyor.",
+            "Günlük kullanım için de oldukça rahat.",
+            "Alt kaydırma yüzeyleri masada akıcı hareket ediyor.",
+            "Kablo kalitesi iyi ama biraz daha esnek olabilirdi.",
+            "Yazılım desteği olsa daha iyi olurdu.",
+            "Tasarımı sade ama şık duruyor.",
+            "FPS oyunlarında kontrol hissi iyi.",
+            "Ağırlığı bana göre ideal.",
+            "Sessiz tıklama bekleyenler için uygun olmayabilir.",
+            "Fiyat performans açısından başarılı.",
+            "Uzun vadede dayanıklılığını görmek lazım."
         ]
     },
     "Klavye": {
         "products": ["Mekanik Klavye", "Gaming Klavye", "Kablosuz Klavye", "RGB Klavye"],
         "comments": [
-            "Tuş hissiyatı çok iyi.",
-            "RGB aydınlatma güzel.",
-            "Tuş sesleri biraz yüksek.",
-            "Yazı yazarken rahat.",
-            "Malzeme kaliteli.",
-            "Uzun kullanımda sorun yok.",
-            "Tepki süresi iyi.",
-            "Kablosuz bağlantı stabil.",
-            "Bazı tuşlar sert.",
-            "Fiyat performans iyi."
+            "Tuş hissiyatı yazı yazarken oldukça iyi.",
+            "RGB aydınlatması canlı ve hoş görünüyor.",
+            "Tuş sesleri biraz yüksek olabilir.",
+            "Uzun süre yazı yazarken rahat ettiriyor.",
+            "Malzeme kalitesi sağlam hissettiriyor.",
+            "Tepki süresi oyunlarda yeterli.",
+            "Kablosuz bağlantı genel olarak stabil.",
+            "Bazı tuşlar ilk kullanımda biraz sert geldi.",
+            "Fiyat performans olarak iyi bir seçenek.",
+            "Bilek desteği olsa daha rahat olurdu.",
+            "Masa üzerinde kayma yapmıyor.",
+            "Tuş dizilimi alışması kolay bir yapıda.",
+            "Işık modları yeterince çeşitli.",
+            "Kablo kalitesi iyi fakat biraz kalın.",
+            "Günlük kullanım ve oyun için dengeli.",
+            "Yazılım desteği daha iyi olabilirdi.",
+            "Tuş kapakları kaliteli duruyor.",
+            "Gece kullanımında ışık seviyesi yeterli.",
+            "Kompakt tasarımı masa alanı kazandırıyor.",
+            "Genel olarak beklentimi karşıladı."
         ]
     },
     "Telefon": {
         "products": ["Akıllı Telefon", "Android Telefon", "Kamera Telefonu", "Performans Telefonu"],
         "comments": [
-            "Kamera çok iyi.",
-            "Batarya süresi başarılı.",
-            "Performans akıcı.",
-            "Ekran kalitesi güzel.",
-            "Şarj süresi uzun.",
-            "Biraz ısınıyor.",
-            "Fiyatına göre iyi.",
-            "Hoparlör ortalama.",
-            "Günlük kullanım rahat.",
-            "Malzeme premium."
+            "Kamera gündüz çekimlerinde oldukça başarılı.",
+            "Batarya süresi günlük kullanım için yeterli.",
+            "Performansı akıcı ve takılma çok az.",
+            "Ekran kalitesi renkler açısından güzel.",
+            "Şarj süresi biraz uzun gelebilir.",
+            "Yoğun kullanımda biraz ısınma yapıyor.",
+            "Fiyatına göre mantıklı bir telefon.",
+            "Hoparlör sesi ortalama seviyede.",
+            "Günlük kullanımda rahat bir deneyim sunuyor.",
+            "Malzeme kalitesi premium hissettiriyor.",
+            "Gece çekimleri çok iyi değil ama idare eder.",
+            "Uygulamalar arası geçişler hızlı.",
+            "Ekran parlaklığı dış mekanda yeterli.",
+            "Kılıfla kullanınca elde tutuşu daha iyi oluyor.",
+            "Depolama alanı çoğu kullanıcı için yeterli.",
+            "Oyun performansı orta-üst seviyede.",
+            "Ön kamera sosyal medya için yeterli.",
+            "Parmak izi okuyucu hızlı çalışıyor.",
+            "Fiyatı biraz yüksek ama sundukları iyi.",
+            "Uzun vadeli kullanımda pil performansı önemli olacak."
         ]
     },
     "Tablet": {
         "products": ["Android Tablet", "Eğitim Tableti", "Taşınabilir Tablet", "Büyük Ekran Tablet"],
         "comments": [
-            "Ekran boyutu ideal.",
-            "Ders için çok iyi.",
-            "Batarya uzun gidiyor.",
-            "Taşıması kolay.",
-            "Dokunmatik hassas.",
-            "Hoparlör zayıf.",
-            "Uygulamalar akıcı.",
-            "Şarj normal.",
-            "Fiyatına göre iyi.",
-            "Parlaklık biraz düşük."
+            "Ekran boyutu ders ve video izlemek için ideal.",
+            "Eğitim amaçlı kullanım için yeterli performans sunuyor.",
+            "Batarya süresi uzun kullanımda avantaj sağlıyor.",
+            "Taşıması kolay ve çok ağır değil.",
+            "Dokunmatik hassasiyeti iyi.",
+            "Hoparlör kalitesi biraz zayıf kalıyor.",
+            "Uygulamalar genel olarak akıcı çalışıyor.",
+            "Şarj süresi normal seviyede.",
+            "Fiyatına göre alınabilir bir ürün.",
+            "Parlaklık seviyesi dış mekanda biraz düşük kalabilir.",
+            "Not almak için kullanışlı.",
+            "Film izlerken ekran kalitesi tatmin edici.",
+            "Çocuklar için eğitim uygulamalarında işe yarıyor.",
+            "Kasa kalitesi fiyatına göre iyi.",
+            "Kamera performansı çok beklentiye girilmemeli.",
+            "Günlük internet kullanımı için yeterli.",
+            "Depolama alanı temel kullanım için uygun.",
+            "Kalem desteği olsa daha iyi olurdu.",
+            "Uzun süre elde tutunca biraz yorabilir.",
+            "Genel olarak beklentimi karşıladı."
         ]
     }
 }
+
+comment_suffixes = [
+    "Genel olarak memnun kaldım.",
+    "Beklentimi büyük ölçüde karşıladı.",
+    "Fiyatı biraz daha uygun olsa daha iyi olurdu.",
+    "Uzun vadede performansını görmek lazım.",
+    "Günlük kullanım için rahatlıkla tercih edilebilir.",
+    "Küçük eksikleri var ama genel deneyim iyi.",
+    "Tekrar almayı düşünebilirim.",
+    "Benzer ürünlere göre başarılı buldum.",
+    "İlk izlenimim olumlu oldu.",
+    "Çok üst seviye beklemeyenler için yeterli."
+]
 
 image_urls = {
     "Kulaklık": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
@@ -97,7 +161,11 @@ image_urls = {
     "Tablet": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0"
 }
 
-usernames = ["Ahmet", "Mehmet", "Ayşe", "Zeynep", "Ali", "Can", "Elif", "Mert"]
+usernames = [
+    "Ahmet", "Mehmet", "Ayşe", "Zeynep", "Ali", "Can", "Elif", "Mert",
+    "Burak", "Ece", "Deniz", "Selin", "Kaan", "Cem", "İrem", "Berk",
+    "Yağmur", "Emre", "Sude", "Kerem"
+]
 
 products = []
 
@@ -125,21 +193,31 @@ comments = []
 
 for product in all_products:
     comment_pool = categories[product.category]["comments"]
-    selected = random.sample(comment_pool, 3)
 
-    if random.random() > 0.5:
-        selected.append(random.choice(comment_pool))
+    # Her ürün için 8-20 yorum
+    comment_count = random.randint(8, 20)
 
-    for text in selected:
-        random_days = random.randint(1, 30)
+    for _ in range(comment_count):
+        base_comment = random.choice(comment_pool)
+        suffix = random.choice(comment_suffixes)
+
+        text = f"{base_comment} {suffix}"
+
+        random_days = random.randint(1, 60)
         comment_date = datetime.now(UTC) - timedelta(days=random_days)
+
+        rating = random.choices(
+            [1, 2, 3, 4, 5],
+            weights=[5, 10, 20, 35, 30]
+        )[0]
 
         comments.append(
             Comment(
                 product_id=product.id,
                 content=text,
                 username=random.choice(usernames),
-                created_at=comment_date
+                created_at=comment_date,
+                rating=rating
             )
         )
 
@@ -147,4 +225,4 @@ db.add_all(comments)
 db.commit()
 db.close()
 
-print("Ürünler ve yorumlar başarıyla eklendi.")
+print("Ürünler ve geliştirilmiş yorumlar başarıyla eklendi.")

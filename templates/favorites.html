@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width: 1200px; margin: 30px auto; padding: 0 20px;">
+    <h2>❤️ Favori Ürünlerim</h2>
+    <p style="color: #6b7280; margin-bottom: 24px;">
+        Favorilere eklediğin ürünleri buradan görebilirsin.
+    </p>
+
+    {% if favorites %}
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start;">
+        {% for favorite in favorites %}
+        <div style="width: 220px; background: white; border-radius: 14px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); box-sizing: border-box;">
+
+            <img
+                src="{{ favorite.product.image_url }}"
+                alt="{{ favorite.product.name }}"
+                style="width: 100%; height: 145px; object-fit: cover; border-radius: 10px; margin-bottom: 12px;"
+            >
+
+            <span class="category-badge">{{ favorite.product.category }}</span>
+
+            <h3 style="font-size: 16px; margin: 8px 0;">
+                {{ favorite.product.name }}
+            </h3>
+
+            <p class="price" style="font-size: 18px; margin: 8px 0;">
+                {{ favorite.product.price }} TL
+            </p>
+
+            <a href="/product/{{ favorite.product.id }}" class="detail-btn">
+                Detaya Git
+            </a>
+
+            <form action="/product/{{ favorite.product.id }}/favorite" method="post">
+    <input type="hidden" name="next" value="/favorites">
+                <button type="submit" style="width: 100%; padding: 9px; font-size: 13px; border-radius: 10px;">
+                    ❤️ Favorilerden Çıkar
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-favorites-card">
+        <h3>Henüz favori ürünün yok.</h3>
+        <p>Ürün detay sayfasından ürünleri favorilerine ekleyebilirsin.</p>
+        <a href="/" class="detail-btn">Ürünlere Göz At</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

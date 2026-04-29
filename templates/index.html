@@ -35,9 +35,31 @@
 <div class="product-grid">
     {% for product in products %}
         <div class="product-card">
+
+            {% if current_user %}
+            <button 
+                type="button"
+                class="card-favorite-btn {% if product.is_favorite %}active{% endif %}"
+                data-product-id="{{ product.id }}"
+            >
+                {% if product.is_favorite %}
+                    ❤️
+                {% else %}
+                    ♡
+                {% endif %}
+            </button>
+            {% endif %}
+
             <img src="{{ product.image_url }}" width="200">
             <h3>{{ product.name }}</h3>
-            <p class="rating">⭐ {{ product.rating }}</p>
+            <p class="rating">
+    ⭐ 
+    {% if product.rating and product.rating > 0 %}
+        {{ product.rating }}/5
+    {% else %}
+        Henüz puan yok
+    {% endif %}
+</p>
             <p class="price">{{ product.price }} TL</p>
             <p class="category-badge category-{{ product.category }}">{{ product.category }}</p>
             <a href="/product/{{ product.id }}" class="detail-btn">Detay</a>
@@ -61,5 +83,40 @@
         <a href="?page={{ page + 1 }}&category={{ selected_category or '' }}&search={{ search_query or '' }}&sort={{ selected_sort or '' }}">Sonraki</a>
     {% endif %}
 </div>
+
+<script>
+document.querySelectorAll(".card-favorite-btn").forEach(function(button) {
+    button.addEventListener("click", async function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const productId = button.dataset.productId;
+
+        try {
+            const response = await fetch(`/api/product/${productId}/favorite`, {
+                method: "POST"
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                alert(data.message || "Favori işlemi başarısız oldu.");
+                return;
+            }
+
+            if (data.is_favorite) {
+                button.classList.add("active");
+                button.innerHTML = "❤️";
+            } else {
+                button.classList.remove("active");
+                button.innerHTML = "♡";
+            }
+
+        } catch (error) {
+            alert("Bir hata oluştu.");
+        }
+    });
+});
+</script>
 
 {% endblock %}

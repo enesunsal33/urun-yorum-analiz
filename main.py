@@ -1,5 +1,6 @@
+from sqlalchemy import func
 from fastapi import FastAPI, Request, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
@@ -71,11 +72,26 @@ def home(request: Request):
     if current_user:
         favorite_product_ids = {
             fav.product_id
-            for fav in db.query(models.Favorite).filter(models.Favorite.user_id == current_user.id).all()
+            for fav in db.query(models.Favorite)
+            .filter(models.Favorite.user_id == current_user.id)
+            .all()
         }
 
     for product in products:
-        product.rating = round(random.uniform(3.0, 5.0), 1)
+        avg_rating = (
+            db.query(func.avg(models.Comment.rating))
+            .filter(
+                models.Comment.product_id == product.id,
+                models.Comment.rating.isnot(None)
+            )
+            .scalar()
+        )
+
+        if avg_rating is not None:
+            product.rating = round(float(avg_rating), 1)
+        else:
+            product.rating = 0
+
         product.is_favorite = product.id in favorite_product_ids
 
     db.close()
@@ -95,32 +111,44 @@ def home(request: Request):
         }
     )
 
-
 @app.get("/product/{product_id}")
 def product_detail(request: Request, product_id: int):
     db = SessionLocal()
     current_user = get_current_user(request, db)
 
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
-    comments = (
-        db.query(models.Comment)
-        .options(joinedload(models.Comment.user))
-        .filter(models.Comment.product_id == product_id)
-        .order_by(models.Comment.created_at.desc())
-        .all()
+
+    comments = db.query(models.Comment).filter(
+        models.Comment.product_id == product_id
+    ).all()
+
+    # ⭐ RATING HESAPLAMA
+    avg_rating = (
+        db.query(func.avg(models.Comment.rating))
+        .filter(
+            models.Comment.product_id == product_id,
+            models.Comment.rating.isnot(None)
+        )
+        .scalar()
     )
 
+    rating_percent = 0
+    
+    if avg_rating is not None:
+        product.rating = round(float(avg_rating), 1)
+        rating_percent = (product.rating / 5) * 100
+    else:
+        product.rating = 0
+
+    # yorum sayısı
+    rating_count = len([c for c in comments if c.rating is not None])
+
     is_favorite = False
-    if current_user and product:
-        is_favorite = (
-            db.query(models.Favorite)
-            .filter(
-                models.Favorite.user_id == current_user.id,
-                models.Favorite.product_id == product_id
-            )
-            .first()
-            is not None
-        )
+    if current_user:
+        is_favorite = db.query(models.Favorite).filter(
+            models.Favorite.user_id == current_user.id,
+            models.Favorite.product_id == product_id
+        ).first() is not None
 
     db.close()
 
@@ -130,16 +158,16 @@ def product_detail(request: Request, product_id: int):
         {
             "product": product,
             "comments": comments,
+            "is_favorite": is_favorite,
             "current_user": current_user,
-            "analysis": None,
-            "error": None,
-            "is_favorite": is_favorite
+            "rating_count": rating_count,
+            "rating_percent": rating_percent
         }
     )
 
 
 @app.post("/product/{product_id}/favorite")
-def toggle_favorite(request: Request, product_id: int):
+def toggle_favorite(request: Request, product_id: int, next: str = Form(None)):
     db = SessionLocal()
     current_user = get_current_user(request, db)
 
@@ -148,9 +176,44 @@ def toggle_favorite(request: Request, product_id: int):
         return RedirectResponse(url="/login", status_code=303)
 
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
+
+    existing_favorite = db.query(models.Favorite).filter(
+        models.Favorite.user_id == current_user.id,
+        models.Favorite.product_id == product_id
+    ).first()
+
+    if existing_favorite:
+        db.delete(existing_favorite)
+    else:
+        db.add(models.Favorite(user_id=current_user.id, product_id=product_id))
+
+    db.commit()
+    db.close()
+
+    # 👇 önemli kısım
+    redirect_url = next if next else f"/product/{product_id}"
+
+    return RedirectResponse(url=redirect_url, status_code=303)
+
+@app.post("/api/product/{product_id}/favorite")
+def toggle_favorite_api(request: Request, product_id: int):
+    db = SessionLocal()
+    current_user = get_current_user(request, db)
+
+    if not current_user:
+        db.close()
+        return JSONResponse(
+            {"success": False, "message": "Giriş yapmalısınız."},
+            status_code=401
+        )
+
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
     if not product:
         db.close()
-        return RedirectResponse(url="/", status_code=303)
+        return JSONResponse(
+            {"success": False, "message": "Ürün bulunamadı."},
+            status_code=404
+        )
 
     existing_favorite = (
         db.query(models.Favorite)
@@ -163,21 +226,23 @@ def toggle_favorite(request: Request, product_id: int):
 
     if existing_favorite:
         db.delete(existing_favorite)
+        is_favorite = False
     else:
         favorite = models.Favorite(
             user_id=current_user.id,
             product_id=product_id
         )
         db.add(favorite)
+        is_favorite = True
 
     db.commit()
     db.close()
 
-    return RedirectResponse(url=f"/product/{product_id}", status_code=303)
+    return {"success": True, "is_favorite": is_favorite}
 
 
 @app.post("/product/{product_id}/comment")
-def add_comment(request: Request, product_id: int, content: str = Form(...)):
+def add_comment(request: Request, product_id: int, content: str = Form(...), rating: int = Form(...)):
     db = SessionLocal()
     current_user = get_current_user(request, db)
 
@@ -200,7 +265,8 @@ def add_comment(request: Request, product_id: int, content: str = Form(...)):
         product_id=product_id,
         user_id=current_user.id,
         username=current_user.username,
-        content=content
+        content=content,
+        rating=rating
     )
 
     db.add(new_comment)
@@ -423,6 +489,35 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
 def logout(request: Request):
     request.session.clear()
     return RedirectResponse(url="/", status_code=303)
+
+
+@app.get("/favorites")
+def favorites_page(request: Request):
+    db = SessionLocal()
+    current_user = get_current_user(request, db)
+
+    if not current_user:
+        db.close()
+        return RedirectResponse(url="/login", status_code=303)
+
+    favorites = (
+        db.query(models.Favorite)
+        .options(joinedload(models.Favorite.product))
+        .filter(models.Favorite.user_id == current_user.id)
+        .order_by(models.Favorite.created_at.desc())
+        .all()
+    )
+
+    db.close()
+
+    return templates.TemplateResponse(
+        request,
+        "favorites.html",
+        {
+            "favorites": favorites,
+            "current_user": current_user
+        }
+    )
 
 
 @app.get("/about")

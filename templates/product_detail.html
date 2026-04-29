@@ -16,6 +16,17 @@
             <h2>{{ product.name }}</h2>
             <p class="price">{{ product.price }} TL</p>
 
+            <!-- ⭐ SADE RATING -->
+            <p class="product-rating">
+                ⭐
+                {% if product.rating and product.rating > 0 %}
+                    {{ product.rating }}/5
+                    <span class="rating-count">({{ rating_count }} yorum)</span>
+                {% else %}
+                    Henüz puan yok
+                {% endif %}
+            </p>
+
             {% if current_user %}
             <form action="/product/{{ product.id }}/favorite" method="post" class="favorite-form">
                 <button type="submit" class="favorite-btn {% if is_favorite %}favorited{% endif %}">
@@ -63,6 +74,16 @@
                 placeholder="Ürün hakkındaki yorumunu yaz..."
                 required
             ></textarea>
+
+            <select name="rating" required>
+                <option value="">Puan ver</option>
+                <option value="5">⭐⭐⭐⭐⭐ 5</option>
+                <option value="4">⭐⭐⭐⭐ 4</option>
+                <option value="3">⭐⭐⭐ 3</option>
+                <option value="2">⭐⭐ 2</option>
+                <option value="1">⭐ 1</option>
+            </select>
+
             <button type="submit">Yorumu Gönder</button>
         </form>
         {% else %}
@@ -96,6 +117,10 @@
                 </div>
 
                 <p class="comment-text">{{ comment.content }}</p>
+
+                {% if comment.rating %}
+                    <span class="comment-rating">⭐ {{ comment.rating }}/5</span>
+                {% endif %}
             </div>
             {% endfor %}
         {% else %}

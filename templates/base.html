@@ -16,6 +16,7 @@
 
     <div class="nav-right">
         {% if current_user %}
+        <a href="/favorites" class="nav-btn">Favorilerim</a>
             <span class="user-badge">👤 {{ current_user.username }}</span>
             <a href="/logout" class="nav-btn">Çıkış Yap</a>
         {% else %}

@@ -40,6 +40,8 @@ class Comment(Base):
     username = Column(String, nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(UTC))
 
+    rating = Column(Integer, nullable=True)
+
     product = relationship("Product", back_populates="comments")
     user = relationship("User", back_populates="comments")
 
