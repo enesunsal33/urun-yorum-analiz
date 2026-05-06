@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-container">
+    <h2>👤 Profil Bilgilerim</h2>
+    <p class="page-description">
+        Hesabınla ilgili temel bilgileri buradan görebilirsin.
+    </p>
+
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ current_user.username[0]|upper }}
+            </div>
+
+            <div>
+                <h3>{{ current_user.username }}</h3>
+                <p>Kayıtlı kullanıcı</p>
+            </div>
+        </div>
+
+        <div class="profile-info-grid">
+            <div class="profile-info-box">
+                <span>Kullanıcı Adı</span>
+                <strong>{{ current_user.username }}</strong>
+            </div>
+
+            <div class="profile-info-box">
+                <span>Kayıt Tarihi</span>
+                <strong>
+                    {% if current_user.created_at %}
+                        {{ current_user.created_at.strftime("%d.%m.%Y") }}
+                    {% else %}
+                        Bilinmiyor
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="profile-info-box">
+                <span>Toplam Yorum</span>
+                <strong>{{ comment_count }}</strong>
+            </div>
+
+            <div class="profile-info-box">
+                <span>Favori Ürün</span>
+                <strong>{{ favorite_count }}</strong>
+            </div>
+        </div>
+
+        <div class="profile-note">
+            Bu sayfa ileride e-posta, şifre değiştirme, profil fotoğrafı ve hesap ayarları için geliştirilebilir.
+        </div>
+    </div>
+</div>
+
+{% endblock %}

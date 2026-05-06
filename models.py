@@ -59,3 +59,29 @@ class Favorite(Base):
 
     user = relationship("User", back_populates="favorites")
     product = relationship("Product", back_populates="favorites")
+
+
+class ProductAnalysisCache(Base):
+    __tablename__ = "product_analysis_cache"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False, unique=True)
+    result_json = Column(Text, nullable=False)
+    comments_count = Column(Integer, nullable=False)
+    updated_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+    product = relationship("Product")
+
+
+class AnalysisHistory(Base):
+    __tablename__ = "analysis_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    product_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    cache_id = Column(Integer, ForeignKey("product_analysis_cache.id"), nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(UTC))
+
+    user = relationship("User")
+    product = relationship("Product")
+    cache = relationship("ProductAnalysisCache")

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-container">
+    <h2>💬 Yorumlarım</h2>
+    <p class="page-description">
+        Ürünlere yaptığın yorumları buradan görebilirsin.
+    </p>
+
+    {% if comments %}
+        <div class="my-comments-list">
+            {% for comment in comments %}
+            <div class="my-comment-card">
+                <div class="my-comment-top">
+                    <div>
+                        <h3>{{ comment.product.name }}</h3>
+                        <span class="category-badge category-{{ comment.product.category }}">
+                            {{ comment.product.category }}
+                        </span>
+                    </div>
+
+                    {% if comment.rating %}
+                    <span class="comment-rating">
+                        ⭐ {{ comment.rating }}/5
+                    </span>
+                    {% endif %}
+                </div>
+
+                <p class="comment-text">
+                    {{ comment.content }}
+                </p>
+
+                <div class="my-comment-bottom">
+                    <span class="comment-date">
+                        {% if comment.created_at %}
+                            {{ comment.created_at.strftime("%d.%m.%Y %H:%M") }}
+                        {% endif %}
+                    </span>
+
+                    <a href="/product/{{ comment.product.id }}" class="detail-btn">
+                        Ürüne Git
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state-card">
+            <h3>Henüz yorum yapmadın.</h3>
+            <p>Ürün detay sayfalarından yorum ekleyebilirsin.</p>
+            <a href="/" class="detail-btn">Ürünlere Göz At</a>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

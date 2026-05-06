@@ -15,5 +15,10 @@ else:
         connect_args={"sslmode": "require", "connect_timeout": 10}
     )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+    expire_on_commit=False
+)
 Base = declarative_base()

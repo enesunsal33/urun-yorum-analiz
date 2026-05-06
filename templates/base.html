@@ -16,10 +16,32 @@
 
     <div class="nav-right">
         {% if current_user %}
-        <a href="/favorites" class="nav-btn">Favorilerim</a>
-            <span class="user-badge">👤 {{ current_user.username }}</span>
-            <a href="/logout" class="nav-btn">Çıkış Yap</a>
-        {% else %}
+<div class="user-menu">
+    <div class="user-menu-trigger">
+        <span class="user-icon">👤</span>
+        <div>
+            <strong>Hesabım</strong>
+            <small>{{ current_user.username }}</small>
+        </div>
+        <span class="arrow">⌄</span>
+    </div>
+
+    <div class="user-dropdown">
+        <div class="dropdown-username">
+            {{ current_user.username }}
+        </div>
+
+        <a href="/favorites">❤️ Favorilerim</a>
+        <a href="/my-comments">💬 Yorumlarım</a>
+        <a href="/profile">👤 Profil Bilgilerim</a>
+        <a href="/analysis-history">🧠 AI Analiz Geçmişim</a>
+
+        <div class="dropdown-divider"></div>
+
+        <a href="/logout" class="logout-link">🚪 Çıkış Yap</a>
+    </div>
+</div>
+{% else %}
             <a href="/login" class="nav-btn">Giriş Yap</a>
             <a href="/register" class="nav-btn register-btn">Kayıt Ol</a>
         {% endif %}

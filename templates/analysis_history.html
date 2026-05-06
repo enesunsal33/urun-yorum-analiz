@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-container">
+    <h2>🧠 AI Analiz Geçmişim</h2>
+
+    <p class="page-description">
+        Daha önce analiz ettiğin ürünleri burada görebilirsin.
+    </p>
+
+    {% if history_items %}
+        <div class="analysis-history-list">
+
+            {% for item in history_items %}
+
+            <div class="analysis-history-card">
+
+                <div class="analysis-history-top">
+                    <div>
+                        <h3>{{ item.product.name }}</h3>
+
+                        <span class="category-badge category-{{ item.product.category }}">
+                            {{ item.product.category }}
+                        </span>
+                    </div>
+
+                    <span class="comment-date">
+                        {% if item.created_at %}
+                            {{ item.created_at.strftime("%d.%m.%Y %H:%M") }}
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="analysis-history-actions">
+                    <a href="/product/{{ item.product.id }}" class="detail-btn">
+                        Ürüne Git
+                    </a>
+
+                    <form action="/product/{{ item.product.id }}/analyze" method="post">
+                        <button type="submit" class="analyze-btn">
+                            Analizi Tekrar Aç
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state-card">
+            <h3>Henüz analiz geçmişin yok.</h3>
+
+            <p>
+                Ürün detay sayfasından AI analiz yaptığında burada görünecek.
+            </p>
+
+            <a href="/" class="detail-btn">
+                Ürünlere Git
+            </a>
+        </div>
+
+    {% endif %}
+</div>
+
+{% endblock %}
