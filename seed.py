@@ -1,5 +1,5 @@
 from database import SessionLocal, Base, engine
-from models import Product, Comment
+from models import Product, Comment, Favorite, ProductAnalysisCache, AnalysisHistory
 from datetime import datetime, timedelta, UTC
 import random
 
@@ -8,6 +8,9 @@ Base.metadata.create_all(bind=engine)
 db = SessionLocal()
 
 # Eski verileri temizle
+db.query(AnalysisHistory).delete()
+db.query(ProductAnalysisCache).delete()
+db.query(Favorite).delete()
 db.query(Comment).delete()
 db.query(Product).delete()
 db.commit()
