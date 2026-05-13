@@ -632,6 +632,30 @@ def profile_page(request: Request):
         .count()
     )
 
+    analysis_count = (
+        db.query(models.AnalysisHistory)
+        .filter(models.AnalysisHistory.user_id == current_user.id)
+        .count()
+    )
+
+    recent_comments = (
+        db.query(models.Comment)
+        .options(joinedload(models.Comment.product))
+        .filter(models.Comment.user_id == current_user.id)
+        .order_by(models.Comment.created_at.desc())
+        .limit(3)
+        .all()
+    )
+
+    recent_analyses = (
+        db.query(models.AnalysisHistory)
+        .options(joinedload(models.AnalysisHistory.product))
+        .filter(models.AnalysisHistory.user_id == current_user.id)
+        .order_by(models.AnalysisHistory.created_at.desc())
+        .limit(3)
+        .all()
+    )
+
     db.close()
 
     return templates.TemplateResponse(
@@ -640,7 +664,10 @@ def profile_page(request: Request):
         {
             "current_user": current_user,
             "comment_count": comment_count,
-            "favorite_count": favorite_count
+            "favorite_count": favorite_count,
+            "analysis_count": analysis_count,
+            "recent_comments": recent_comments,
+            "recent_analyses": recent_analyses
         }
     )
 

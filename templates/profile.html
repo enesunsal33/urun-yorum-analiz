@@ -2,56 +2,119 @@
 
 {% block content %}
 
-<div class="page-container">
-    <h2>👤 Profil Bilgilerim</h2>
-    <p class="page-description">
-        Hesabınla ilgili temel bilgileri buradan görebilirsin.
-    </p>
+<div class="profile-page">
 
-    <div class="profile-card">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                {{ current_user.username[0]|upper }}
-            </div>
-
-            <div>
-                <h3>{{ current_user.username }}</h3>
-                <p>Kayıtlı kullanıcı</p>
-            </div>
+    <div class="profile-hero">
+        <div class="profile-avatar big">
+            {{ current_user.username[0]|upper }}
         </div>
 
-        <div class="profile-info-grid">
-            <div class="profile-info-box">
-                <span>Kullanıcı Adı</span>
-                <strong>{{ current_user.username }}</strong>
-            </div>
-
-            <div class="profile-info-box">
-                <span>Kayıt Tarihi</span>
-                <strong>
-                    {% if current_user.created_at %}
-                        {{ current_user.created_at.strftime("%d.%m.%Y") }}
-                    {% else %}
-                        Bilinmiyor
-                    {% endif %}
-                </strong>
-            </div>
-
-            <div class="profile-info-box">
-                <span>Toplam Yorum</span>
-                <strong>{{ comment_count }}</strong>
-            </div>
-
-            <div class="profile-info-box">
-                <span>Favori Ürün</span>
-                <strong>{{ favorite_count }}</strong>
-            </div>
+        <div class="profile-hero-info">
+            <span class="profile-label">Kullanıcı Profili</span>
+            <h2>{{ current_user.username }}</h2>
+            <p>
+                Ürün yorumları, favoriler ve AI analiz geçmişin burada toplanır.
+            </p>
         </div>
 
-        <div class="profile-note">
-            Bu sayfa ileride e-posta, şifre değiştirme, profil fotoğrafı ve hesap ayarları için geliştirilebilir.
+        <div class="profile-date-box">
+            <span>Kayıt Tarihi</span>
+            <strong>
+                {% if current_user.created_at %}
+                    {{ current_user.created_at.strftime("%d.%m.%Y") }}
+                {% else %}
+                    Bilinmiyor
+                {% endif %}
+            </strong>
         </div>
     </div>
+
+    <div class="profile-stats-grid">
+        <div class="profile-stat-card">
+            <span>💬</span>
+            <div>
+                <strong>{{ comment_count }}</strong>
+                <p>Toplam Yorum</p>
+            </div>
+        </div>
+
+        <div class="profile-stat-card">
+            <span>❤️</span>
+            <div>
+                <strong>{{ favorite_count }}</strong>
+                <p>Favori Ürün</p>
+            </div>
+        </div>
+
+        <div class="profile-stat-card">
+            <span>🧠</span>
+            <div>
+                <strong>{{ analysis_count }}</strong>
+                <p>AI Analizi</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-actions">
+        <a href="/my-comments">💬 Yorumlarım</a>
+        <a href="/favorites">❤️ Favorilerim</a>
+        <a href="/analysis-history">🧠 AI Analiz Geçmişim</a>
+    </div>
+
+    <div class="profile-dashboard-grid">
+
+        <div class="profile-panel">
+            <div class="profile-panel-header">
+                <h3>Son Yorumların</h3>
+                <a href="/my-comments">Tümünü Gör</a>
+            </div>
+
+            {% if recent_comments %}
+                {% for comment in recent_comments %}
+                <div class="profile-mini-item">
+                    <div>
+                        <strong>{{ comment.product.name }}</strong>
+                        <p>{{ comment.content[:90] }}{% if comment.content|length > 90 %}...{% endif %}</p>
+                    </div>
+
+                    {% if comment.rating %}
+                    <span class="mini-rating">⭐ {{ comment.rating }}/5</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="profile-empty-text">Henüz yorum yapmadın.</p>
+            {% endif %}
+        </div>
+
+        <div class="profile-panel">
+            <div class="profile-panel-header">
+                <h3>Son AI Analizlerin</h3>
+                <a href="/analysis-history">Tümünü Gör</a>
+            </div>
+
+            {% if recent_analyses %}
+                {% for item in recent_analyses %}
+                <div class="profile-mini-item">
+                    <div>
+                        <strong>{{ item.product.name }}</strong>
+                        <p>
+                            {% if item.created_at %}
+                                {{ item.created_at.strftime("%d.%m.%Y %H:%M") }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <a href="/product/{{ item.product.id }}" class="mini-link">Aç</a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="profile-empty-text">Henüz AI analizi yapmadın.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}

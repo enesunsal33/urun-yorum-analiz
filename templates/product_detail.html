@@ -63,6 +63,50 @@
     </div>
     {% endif %}
 
+    {% if analysis %}
+    <div class="analysis-card">
+        <h2 class="analysis-title">🧠 AI Analiz Sonucu</h2>
+
+        <div class="analysis-section">
+            <h3>📌 Genel Görüş</h3>
+            <p>{{ analysis.genel_gorus }}</p>
+        </div>
+
+        <div class="analysis-section">
+            <h3>✔ Avantajlar</h3>
+            <ul>
+                {% for item in analysis.avantajlar %}
+                <li>✔ {{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="analysis-section">
+            <h3>❌ Dezavantajlar</h3>
+            <ul>
+                {% for item in analysis.dezavantajlar %}
+                <li>❌ {{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="analysis-section">
+            <h3>👤 Kime Uygun?</h3>
+            <p>{{ analysis.kime_uygun }}</p>
+        </div>
+
+        <div class="analysis-section warning">
+            <h3>⚠ Dikkat Edilmesi Gerekenler</h3>
+            <p>{{ analysis.dikkat_edilmesi_gerekenler }}</p>
+        </div>
+
+        <div class="analysis-section summary">
+            <h3>📝 Özet</h3>
+            <p>{{ analysis.ozet }}</p>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="comment-form-card">
         <h3>Yorum Yap</h3>
 
@@ -129,50 +173,6 @@
             </div>
         {% endif %}
     </div>
-
-    {% if analysis %}
-    <div class="analysis-card">
-        <h2 class="analysis-title">🧠 AI Analiz Sonucu</h2>
-
-        <div class="analysis-section">
-            <h3>📌 Genel Görüş</h3>
-            <p>{{ analysis.genel_gorus }}</p>
-        </div>
-
-        <div class="analysis-section">
-            <h3>✔ Avantajlar</h3>
-            <ul>
-                {% for item in analysis.avantajlar %}
-                <li>✔ {{ item }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div class="analysis-section">
-            <h3>❌ Dezavantajlar</h3>
-            <ul>
-                {% for item in analysis.dezavantajlar %}
-                <li>❌ {{ item }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-
-        <div class="analysis-section">
-            <h3>👤 Kime Uygun?</h3>
-            <p>{{ analysis.kime_uygun }}</p>
-        </div>
-
-        <div class="analysis-section warning">
-            <h3>⚠ Dikkat Edilmesi Gerekenler</h3>
-            <p>{{ analysis.dikkat_edilmesi_gerekenler }}</p>
-        </div>
-
-        <div class="analysis-section summary">
-            <h3>📝 Özet</h3>
-            <p>{{ analysis.ozet }}</p>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
 <script>
