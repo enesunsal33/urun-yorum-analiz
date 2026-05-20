@@ -26,6 +26,12 @@
                     Henüz puan yok
                 {% endif %}
             </p>
+            {% if ml_summary %}
+<div class="product-ml-summary-box">
+    <h4>📊 ML Yorum Özeti</h4>
+    <p>{{ ml_summary }}</p>
+</div>
+{% endif %}
 
             {% if current_user %}
             <form action="/product/{{ product.id }}/favorite" method="post" class="favorite-form">

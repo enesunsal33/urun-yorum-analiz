@@ -1280,3 +1280,25 @@ button:hover {
     padding: 16px;
     border-radius: 14px;
 }
+
+.product-ml-summary-box {
+    margin: 14px 0 16px 0;
+    padding: 16px 18px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-left: 5px solid #22c55e;
+    border-radius: 16px;
+}
+
+.product-ml-summary-box h4 {
+    margin: 0 0 8px 0;
+    color: #14532d;
+    font-size: 16px;
+}
+
+.product-ml-summary-box p {
+    margin: 0;
+    color: #334155;
+    line-height: 1.6;
+    font-size: 14px;
+}

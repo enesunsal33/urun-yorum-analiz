@@ -1,4 +1,5 @@
 import json
+from services.ml_summarizer import generate_ml_comment_summary
 from schemas import ProductAnalysisSchema
 from sqlalchemy import func
 from fastapi import FastAPI, Request, Form
@@ -119,6 +120,10 @@ def product_detail(request: Request, product_id: int):
 
     product = db.query(models.Product).filter(models.Product.id == product_id).first()
 
+    if not product:
+        db.close()
+        return RedirectResponse(url="/", status_code=303)
+
     comments = db.query(models.Comment).filter(
         models.Comment.product_id == product_id
     ).all()
@@ -134,7 +139,7 @@ def product_detail(request: Request, product_id: int):
     )
 
     rating_percent = 0
-    
+
     if avg_rating is not None:
         product.rating = round(float(avg_rating), 1)
         rating_percent = (product.rating / 5) * 100
@@ -143,6 +148,11 @@ def product_detail(request: Request, product_id: int):
 
     # yorum sayısı
     rating_count = len([c for c in comments if c.rating is not None])
+
+    # 📊 ML TABANLI YORUM ÖZETİ
+    ml_summary = generate_ml_comment_summary(
+        comments=[comment.content for comment in comments]
+    )
 
     is_favorite = False
     if current_user:
@@ -162,7 +172,8 @@ def product_detail(request: Request, product_id: int):
             "is_favorite": is_favorite,
             "current_user": current_user,
             "rating_count": rating_count,
-            "rating_percent": rating_percent
+            "rating_percent": rating_percent,
+            "ml_summary": ml_summary
         }
     )
 
@@ -297,7 +308,8 @@ def analyze_product(request: Request, product_id: int):
                 "current_user": current_user,
                 "is_favorite": False,
                 "rating_count": 0,
-                "rating_percent": 0
+                "rating_percent": 0,
+                "ml_summary": ml_summary
             }
         )
 
@@ -327,6 +339,9 @@ def analyze_product(request: Request, product_id: int):
         product.rating = 0
 
     rating_count = len([c for c in comments if c.rating is not None])
+    ml_summary = generate_ml_comment_summary(
+    comments=[comment.content for comment in comments]
+)
 
     is_favorite = False
     if current_user:
@@ -353,7 +368,8 @@ def analyze_product(request: Request, product_id: int):
                 "current_user": current_user,
                 "is_favorite": is_favorite,
                 "rating_count": rating_count,
-                "rating_percent": rating_percent
+                "rating_percent": rating_percent,
+                "ml_summary": ml_summary
             }
         )
 
@@ -414,7 +430,8 @@ def analyze_product(request: Request, product_id: int):
                 "current_user": current_user,
                 "is_favorite": is_favorite,
                 "rating_count": rating_count,
-                "rating_percent": rating_percent
+                "rating_percent": rating_percent,
+                "ml_summary": ml_summary
             }
         )
 
@@ -432,7 +449,8 @@ def analyze_product(request: Request, product_id: int):
                 "current_user": current_user,
                 "is_favorite": is_favorite,
                 "rating_count": rating_count,
-                "rating_percent": rating_percent
+                "rating_percent": rating_percent,
+                "ml_summary": ml_summary
             }
         )
 

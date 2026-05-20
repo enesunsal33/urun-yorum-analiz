@@ -9,3 +9,5 @@ psycopg2-binary
 passlib
 python-multipart
 itsdangerous
+scikit-learn
+datasets
