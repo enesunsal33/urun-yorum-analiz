@@ -12,7 +12,7 @@ from sqlalchemy.orm import joinedload
 from services.ai_analyzer import analyze_product_comments
 from database import Base, engine, SessionLocal
 from config import SECRET_KEY
-import models
+import models as models
 import random
 
 app = FastAPI()

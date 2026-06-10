@@ -1,5 +1,5 @@
 from database import Base, engine
-import models
+import models as models
 
 print("1- Tablolar oluşturuluyor...")
 Base.metadata.create_all(bind=engine)
